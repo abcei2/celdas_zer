@@ -1,30 +1,21 @@
-# USAGE
-# python maskrcnn_predict.py --weights mask_rcnn_coco.h5 --labels coco_labels.txt --image images/30th_birthday.jpg
-
-# import the necessary packages
-from mrcnn.config import Config
-from mrcnn import model as modellib
-from mrcnn import visualize
-import numpy as np
-import colorsys
-import argparse
-import imutils
-import random
-import cv2
 import os
+import cv2
+import random
+import colorsys
+import numpy as np
 
-# construct the argument parse and parse the arguments
-ap = argparse.ArgumentParser()
-ap.add_argument("-w", "--weights", required=True,
-                help="path to Mask R-CNN model weights pre-trained on COCO")
-ap.add_argument("-l", "--labels", required=True,
-                help="path to class labels file")
-ap.add_argument("-i", "--image", required=True,
-                help="path to input image to apply Mask R-CNN to")
-args = vars(ap.parse_args())
+from mrcnn import visualize
+from mrcnn import model as modellib
+from mrcnn.config import Config
 
-# load the class label names from disk, one label per line
-CLASS_NAMES = open(args["labels"]).read().strip().split("\n")
+
+VIDEO_SOURCE = 0
+
+LABELS_FILE = 'coco_labels.txt'
+WEIGHTS_FILE = 'mask_rcnn_coco.h5'
+
+CLASS_NAMES = open(LABELS_FILE).read().strip().split("\n")
+
 
 # generate random (but visually distinct) colors for each class label
 # (thanks to Matterport Mask R-CNN for the method!)
@@ -38,39 +29,37 @@ class SimpleConfig(Config):
     # give the configuration a recognizable name
     NAME = "coco_inference"
 
-    # set the number of GPUs to use along with the number of images
-    # per GPU
+    # set the number of GPUs to use along with the number of images per GPU
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
 
     # number of classes (we would normally add +1 for the background
-    # but the background class is *already* included in the class
-    # names)
+    # but the background class is *already* included in the class names)
     NUM_CLASSES = len(CLASS_NAMES)
 
 
 # initialize the inference configuration
 config = SimpleConfig()
 
-# initialize the Mask R-CNN model for inference and then load the
-# weights
+# initialize the Mask R-CNN model for inference and then load the weights
 print("[INFO] loading Mask R-CNN model...")
 model = modellib.MaskRCNN(mode="inference", config=config,
                           model_dir=os.getcwd())
 print(os.getcwd())
-model.load_weights(args["weights"], by_name=True)
+model.load_weights(WEIGHTS_FILE, by_name=True)
 
 # load the input image, convert it from BGR to RGB channel
 # ordering, and resize the image
-cap = cv2.VideoCapture("/home/pdi/Videos/prueba4cut.mp4")
-FrameSkiping=1
-while(True):
+cap = cv2.VideoCapture(VIDEO_SOURCE)
+FrameSkiping = 1
 
-    ret, image = cap.read()
+while True:
+
+    _, image = cap.read()
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-    #image = imutils.resize(image, width=512)
+    # image = imutils.resize(image, width=512)
 
-    FrameSkiping = FrameSkiping+1
+    FrameSkiping = FrameSkiping + 1
 
     if(FrameSkiping % 30 == 0):
         # perform a forward pass of the network to obtain the results
@@ -112,4 +101,3 @@ while(True):
         # show the output image
         cv2.imshow("Output", image)
         cv2.waitKey(10)
-
