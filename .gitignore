@@ -1,2 +1,4 @@
 .venv
 *.h5
+.DS_Store
+model_logs
