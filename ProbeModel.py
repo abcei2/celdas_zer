@@ -9,7 +9,7 @@ from mrcnn import model as modellib
 from mrcnn.config import Config
 
 
-VIDEO_SOURCE = 0
+VIDEO_SOURCE = "http://199.48.198.27/mjpg/video.mjpg"
 
 LABELS_FILE = 'coco_labels.txt'
 WEIGHTS_FILE = 'mask_rcnn_coco.h5'
@@ -56,6 +56,9 @@ FrameSkiping = 1
 while True:
 
     _, image = cap.read()
+    image = cv2.resize(
+        image, None, fx=0.5, fy=0.5, interpolation=cv2.INTER_CUBIC
+    )
     image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
     # image = imutils.resize(image, width=512)
 
