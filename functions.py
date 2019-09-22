@@ -3,29 +3,6 @@ from mrcnn.config import Config
 
 
 ################
-## CREATE TRACKER##
-(major_ver, minor_ver, subminor_ver) = (cv2.__version__).split('.')
-print(major_ver)
-
-def CreateTracker(tracker_type):
-
-    if int(major_ver) < 3:
-        tracker = cv2.Tracker_create(tracker_type)
-    else:
-        if tracker_type == 'BOOSTING':
-            tracker = cv2.TrackerBoosting_create()
-        if tracker_type == 'MIL':
-            tracker = cv2.TrackerMIL_create()
-        if tracker_type == 'KCF':
-            tracker = cv2.TrackerKCF_create()
-        if tracker_type == 'TLD':
-            tracker = cv2.TrackerTLD_create()
-        if tracker_type == 'MEDIANFLOW':
-            tracker = cv2.TrackerMedianFlow_create()
-        if tracker_type == 'GOTURN':
-            tracker = cv2.TrackerGOTURN_create()
-    return tracker
-################
 ## INIT ZONES##
 global pts, clicked, Zone, DrawEscene
 clicked = False
@@ -45,9 +22,10 @@ def click_and_crop(event, x, y, flags, param):
     elif event == cv2.EVENT_LBUTTONUP:
         pts[Zone-1][1] = (x, y)
         clicked = False
-    elif event == 3:
+    elif event == 2:
         Zone = Zone+1
         pts.append([(10, 5), (20, 30)])
+        print("Points", pts)
     elif event == cv2.EVENT_MOUSEMOVE:
         if(clicked):
             AuxFrame = DrawEscene.copy()
@@ -74,3 +52,9 @@ class SimpleConfig(Config):
     GPU_COUNT = 1
     IMAGES_PER_GPU = 1
     NUM_CLASSES=81
+
+
+def resize_frame(frame, factor):
+    return cv2.resize(
+        frame, None, fx=factor, fy=factor, interpolation=cv2.INTER_CUBIC
+    )
