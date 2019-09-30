@@ -17,9 +17,6 @@ IMAGE_RESIZE_FACTOR = 0.5
 MinDistance = 70  # MIN DISTANCE TO ZONE PIXELS
 Factor = 0.3  # ZONE FACTOR
 
-tracker_types = ['BOOSTING', 'MIL', 'KCF', 'TLD', 'MEDIANFLOW', 'GOTURN']
-tracker_type = tracker_types[2]
-
 InitiZones = False
 #####################################
 
